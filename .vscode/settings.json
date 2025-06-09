@@ -1,0 +1,44 @@
+{
+  // 启用保存时自动格式化
+  "editor.formatOnSave": true,
+
+  // 设置默认格式化工具为 Prettier
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
+
+
+  // ESLint 配置
+  "eslint.enable": true,
+  "eslint.validate": [
+    "javascript",
+    "javascriptreact",
+    "typescript",
+    "typescriptreact",
+    "vue",
+    "html",
+    "markdown"
+  ],
+  "eslint.useFlatConfig": true,
+  "eslint.workingDirectories": [
+    {
+      "mode": "auto"
+    }
+  ],
+  "eslint.options": {
+    "ignorePatterns": ["**/dist/**", "**/build/**"]
+  },
+
+  // 保存时的代码操作
+  "editor.codeActionsOnSave": {
+    "source.fixAll.eslint": "explicit"
+    // "source.organizeImports": "explicit"  // 暂时禁用，使用 ESLint 管理 import
+  },
+
+  // 自动清理行尾空格
+  "files.trimTrailingWhitespace": true,
+  "files.trimFinalNewlines": true,
+  "files.insertFinalNewline": true,
+
+  // Prettier 扩展配置
+  "prettier.requireConfig": true,
+  "prettier.useEditorConfig": false
+}

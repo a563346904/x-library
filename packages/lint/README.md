@@ -1,6 +1,6 @@
 # @x-library/lint
 
-一个统一的代码规范配置包，包含 ESLint 和 Prettier 配置。
+一个统一的代码规范配置包，包含 ESLint、Prettier 和 Commitlint 配置。
 
 ## 功能特性
 
@@ -9,8 +9,28 @@
 - 🎯 **Vue 3 支持** - 专门针对 Vue 3 Composition API 优化
 - 🔧 **可定制** - 灵活的配置组合方式
 - 📝 **TypeScript 友好** - 完整的类型支持
+- 💬 **提交规范** - 基于 Conventional Commits 的提交信息规范
 
 ## 安装
+
+### 完整安装（推荐）
+
+安装 lint 包及其相关工具：
+
+```bash
+# 使用 npm
+npm install -D @x-library/lint @commitlint/cli eslint prettier husky lint-staged
+
+# 使用 pnpm
+pnpm add -D @x-library/lint @commitlint/cli eslint prettier husky lint-staged
+
+# 使用 yarn
+yarn add -D @x-library/lint @commitlint/cli eslint prettier husky lint-staged
+```
+
+### 仅安装 lint 包
+
+如果你只需要配置而不需要运行工具：
 
 ```bash
 npm install @x-library/lint --save-dev
@@ -19,6 +39,8 @@ pnpm add @x-library/lint -D
 # 或
 yarn add @x-library/lint --dev
 ```
+
+> **注意**: lint 包已经包含了所有必要的依赖，可以独立使用于任何项目。
 
 ## 使用方法
 
@@ -54,6 +76,61 @@ export default {
   printWidth: 120,
   trailingComma: 'es5'
 };
+```
+
+### Commitlint 配置
+
+#### 基础使用
+
+```javascript
+// commitlint.config.mjs
+import { commitlintConfig } from '@x-library/lint/commitlint';
+
+export default commitlintConfig();
+```
+
+#### 自定义配置
+
+```javascript
+// commitlint.config.mjs
+import { commitlintConfig, RuleConfigSeverity } from '@x-library/lint/commitlint';
+
+export default commitlintConfig({
+  rules: {
+    'subject-max-length': [RuleConfigSeverity.Error, 'always', 50], // 自定义主题长度
+    'type-enum': [RuleConfigSeverity.Error, 'always', ['feat', 'fix', 'docs']] // 限制提交类型
+  }
+});
+```
+
+#### 使用 TypeScript 配置
+
+```typescript
+// commitlint.config.ts
+import type { CommitlintConfig } from '@x-library/lint/commitlint';
+import { commitlintConfig, RuleConfigSeverity } from '@x-library/lint/commitlint';
+
+const config: CommitlintConfig = commitlintConfig({
+  rules: {
+    'subject-max-length': [RuleConfigSeverity.Warning, 'always', 100],
+    'type-enum': [RuleConfigSeverity.Error, 'always', ['feat', 'fix', 'docs']]
+  }
+});
+
+export default config;
+```
+
+#### 预设配置
+
+```javascript
+// commitlint.config.mjs
+import { strictCommitlintConfig, relaxedCommitlintConfig } from '@x-library/lint/commitlint';
+
+// 使用严格模式
+export default strictCommitlintConfig();
+
+// 或使用宽松模式
+// export default relaxedCommitlintConfig();
 ```
 
 ### 生成 .prettierignore 文件
@@ -100,7 +177,50 @@ console.log(prettierIgnorePatterns);
 - **trailingComma**: 'none' - 不添加尾随逗号
 - **arrowParens**: 'always' - 箭头函数参数始终使用括号
 
-### 默认忽略模式
+### Commitlint 配置说明
+
+#### 默认规则
+
+- **extends**: `@commitlint/config-conventional` - 继承 Conventional Commits 规范
+- **subject-max-length**: 72 - 提交主题最大长度
+- **type-enum**: 支持的提交类型（feat、fix、docs、style、refactor、perf、test、build、ci、chore、revert）
+- **subject-case**: 提交主题必须以小写字母开头
+
+#### 官方类型支持
+
+本包使用 `@commitlint/types` 中的官方类型定义：
+
+- **CommitlintConfig**: 等同于 `UserConfig` 类型
+- **RuleConfigSeverity**: 规则严重性枚举
+  - `RuleConfigSeverity.Disabled` (0) - 禁用规则
+  - `RuleConfigSeverity.Warning` (1) - 警告级别
+  - `RuleConfigSeverity.Error` (2) - 错误级别
+
+#### 支持的提交类型
+
+| 类型       | 说明         | 示例                        |
+| ---------- | ------------ | --------------------------- |
+| `feat`     | 新功能       | `feat: 添加用户登录功能`    |
+| `fix`      | 修复 bug     | `fix: 修复用户头像显示问题` |
+| `docs`     | 文档更新     | `docs: 更新 API 文档`       |
+| `style`    | 代码格式调整 | `style: 格式化代码`         |
+| `refactor` | 代码重构     | `refactor: 重构用户模块`    |
+| `perf`     | 性能优化     | `perf: 优化查询性能`        |
+| `test`     | 添加测试     | `test: 添加登录功能测试`    |
+| `build`    | 构建相关     | `build: 更新构建配置`       |
+| `ci`       | CI 配置      | `ci: 添加 GitHub Actions`   |
+| `chore`    | 杂项         | `chore: 更新依赖版本`       |
+| `revert`   | 回滚         | `revert: 回滚登录功能`      |
+
+#### 预设配置对比
+
+| 模式 | 主题长度 | 提交类型限制  | 大小写检查   |
+| ---- | -------- | ------------- | ------------ |
+| 默认 | 72字符   | 所有11种类型  | 必须小写开头 |
+| 严格 | 50字符   | 仅5种核心类型 | 强制全小写   |
+| 宽松 | 100字符  | 所有11种类型  | 不检查大小写 |
+
+### Prettier 默认忽略模式
 
 - Lock files: `package-lock.json`, `pnpm-lock.yaml`, `yarn.lock`
 - Build outputs: `dist/`, `build/`, `.turbo/`
@@ -109,27 +229,67 @@ console.log(prettierIgnorePatterns);
 - IDE/OS files: `.DS_Store`, `.vscode/settings.json`
 - 临时文件和日志文件
 
-## 在 Monorepo 中使用
+## 第三方项目完整配置示例
 
-在 monorepo 的根目录创建配置文件：
+### 1. 创建配置文件
 
 ```javascript
+// eslint.config.mjs
+import { eslintConfig } from '@x-library/lint';
+export default eslintConfig;
+
 // .prettierrc.mjs
 import { prettierConfig } from '@x-library/lint/prettier';
+export default prettierConfig();
 
-export default prettierConfig;
+// commitlint.config.mjs
+import { commitlintConfig } from '@x-library/lint/commitlint';
+export default commitlintConfig();
 ```
 
-然后在 package.json 中添加脚本：
+### 2. 配置 package.json
 
 ```json
 {
   "scripts": {
+    "prepare": "husky",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
     "format": "prettier --write .",
     "format:check": "prettier --check ."
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,vue}": ["eslint --fix", "prettier --write"],
+    "*.{json,md,yml,yaml}": ["prettier --write"]
   }
 }
 ```
+
+### 3. 初始化 Git 钩子
+
+```bash
+# 初始化 husky
+npx husky init
+
+# 创建 pre-commit 钩子
+echo "npx lint-staged" > .husky/pre-commit
+
+# 创建 commit-msg 钩子
+echo "npx --no -- commitlint --edit \${1}" > .husky/commit-msg
+```
+
+### 4. 创建忽略文件
+
+```bash
+# .eslintignore
+node_modules/
+dist/
+build/
+
+# .prettierignore (可选，使用内置忽略规则)
+```
+
+完整示例请参考 `examples/` 目录。
 
 ## 模块化结构
 

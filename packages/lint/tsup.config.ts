@@ -4,7 +4,8 @@ export default defineConfig({
   entry: {
     index: 'src/index.ts',
     'eslint/index': 'src/eslint/index.ts',
-    'prettier/index': 'src/prettier/index.ts'
+    'prettier/index': 'src/prettier/index.ts',
+    'commitlint/index': 'src/commitlint/index.ts'
   },
   format: ['cjs', 'esm'],
   dts: true,
