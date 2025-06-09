@@ -20,12 +20,20 @@
     "play:vite-vue3-js": "cd play/vite-project-vue3-js && npm run dev",
     "changeset": "changeset",
     "version-packages": "changeset version",
-    "release": "turbo run build --filter=!@x-library/docs && changeset publish"
+    "release": "turbo run build --filter=!@x-library/docs && changeset publish",
+    "prepare": "husky"
   },
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
+    "@commitlint/cli": "^19.8.1",
     "@turbo/gen": "^1.11.1",
+    "@types/jest": "^29.5.8",
     "@x-library/lint": "workspace:*",
+    "husky": "^9.1.7",
+    "jest": "^29.7.0",
+    "lint-staged": "^16.1.0",
+    "ts-jest": "^29.1.1",
+    "tsup": "^8.3.5",
     "turbo": "^1.11.1",
     "typescript": "^5.3.3"
   },
@@ -33,5 +41,14 @@
     "node": ">=18",
     "pnpm": ">=8"
   },
-  "packageManager": "pnpm@8.15.1"
+  "packageManager": "pnpm@8.15.1",
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,vue}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md,yml,yaml}": [
+      "prettier --write"
+    ]
+  }
 }
