@@ -1,0 +1,37 @@
+{
+  "name": "x-library",
+  "version": "0.0.1",
+  "description": "A modern monorepo for x-library project",
+  "private": true,
+  "workspaces": [
+    "packages/*",
+    "apps/*",
+    "play/*"
+  ],
+  "scripts": {
+    "build": "turbo run build",
+    "build:utils": "turbo run build --filter=@x-library/utils",
+    "build:lint": "turbo run build --filter=@x-library/lint",
+    "dev": "turbo run dev",
+    "test": "turbo run test",
+    "clean": "turbo run clean",
+    "example": "turbo run dev --filter=@x-library/example",
+    "play:rsbuild-vue3-js": "pnpm --filter=rsbuild-project-vue3-js dev",
+    "play:vite-vue3-js": "cd play/vite-project-vue3-js && npm run dev",
+    "changeset": "changeset",
+    "version-packages": "changeset version",
+    "release": "turbo run build --filter=!@x-library/docs && changeset publish"
+  },
+  "devDependencies": {
+    "@changesets/cli": "^2.27.1",
+    "@turbo/gen": "^1.11.1",
+    "@x-library/lint": "workspace:*",
+    "turbo": "^1.11.1",
+    "typescript": "^5.3.3"
+  },
+  "engines": {
+    "node": ">=18",
+    "pnpm": ">=8"
+  },
+  "packageManager": "pnpm@8.15.1"
+}

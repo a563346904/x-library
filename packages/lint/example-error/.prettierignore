@@ -1,0 +1,2 @@
+# 忽略所有示例错误文件
+eslint-error-examples/**/*
