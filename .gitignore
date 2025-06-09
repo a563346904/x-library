@@ -20,7 +20,6 @@ out/
 .env.production.local
 
 # IDE and editors
-.vscode/
 .idea/
 *.swp
 *.swo
@@ -82,4 +81,4 @@ coverage/
 .vscode-test
 
 # Turbo
-.turbo 
+.turbo
