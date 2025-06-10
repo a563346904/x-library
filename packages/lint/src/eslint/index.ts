@@ -33,7 +33,7 @@ function mergeUserConfig(baseConfig: Linter.Config, options: EslintConfigOptions
  * @returns ESLint 配置数组
  */
 export function eslintConfig(options: EslintConfigOptions = {}): Linter.Config[] {
-  const { additionalConfigs = [], disable = {}, ignores, ...userOptions } = options;
+  const { additionalConfigs = [], disable = {}, ignores, rules, ...userOptions } = options;
 
   // 基础配置
   const baseConfigs: Linter.Config[] = [
@@ -62,6 +62,13 @@ export function eslintConfig(options: EslintConfigOptions = {}): Linter.Config[]
   // 添加 Prettier 配置（如果未禁用）
   if (!disable.prettier) {
     configs.push(prettierConfig);
+  }
+
+  // 添加用户的全局规则配置（如果有）
+  if (rules && Object.keys(rules).length > 0) {
+    configs.push({
+      rules
+    });
   }
 
   // 合并额外的配置

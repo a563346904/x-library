@@ -27,9 +27,26 @@
     "ignorePatterns": ["**/dist/**", "**/build/**"]
   },
 
+  "stylelint.enable": true,
+  "stylelint.validate": [
+    "css",
+    "scss",
+    "sass",
+    "less",
+    "vue"
+  ],
+  "stylelint.snippet": [
+    "css",
+    "scss",
+    "sass",
+    "less",
+    "vue"
+  ],
+
   // 保存时的代码操作
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": "explicit"
+    "source.fixAll.eslint": "explicit",
+    "source.fixAll.stylelint": "explicit"
     // "source.organizeImports": "explicit"  // 暂时禁用，使用 ESLint 管理 import
   },
 

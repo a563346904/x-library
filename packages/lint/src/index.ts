@@ -9,5 +9,9 @@ export type { PrettierConfig } from './prettier/index.js';
 export { commitlintConfig, defaultCommitTypes, RuleConfigSeverity } from './commitlint/index.js';
 export type { CommitlintConfig, CommitType } from './commitlint/index.js';
 
+// 导出 Stylelint 配置
+export { stylelintConfig, default as stylelint } from './stylelint/index.js';
+export type { StylelintConfig } from './stylelint/index.js';
+
 // 主导出
 export { config as default } from './eslint/index.js';

@@ -15,14 +15,8 @@ export default eslintConfig({
     '**/*.spec.*', // 忽略所有规格文件
     '**/test/**', // 忽略所有 test 目录
 
-    // 错误示例目录（由单独的配置处理）
-    'packages/lint/example-error/**',
-
     // 额外的锁文件
     'yarn.lock',
     'package-lock.json'
-  ],
-
-  // 自定义规则配置
-  rules: {}
+  ]
 });

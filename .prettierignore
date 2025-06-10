@@ -30,8 +30,5 @@ logs/
 tmp/
 temp/
 
-# 忽略所有示例错误文件
-packages/lint/example-error/eslint-error-examples/**/*
-
 # Changeset files (these should maintain their original formatting)
 .changeset/*.md

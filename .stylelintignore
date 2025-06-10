@@ -1,0 +1,41 @@
+# 依赖和第三方库
+node_modules/
+**/node_modules/
+
+# 构建输出目录
+dist/
+**/dist/
+build/
+**/build/
+.next/
+.nuxt/
+.output/
+
+# 临时文件和缓存
+.cache/
+.temp/
+.tmp/
+*.tmp
+*.temp
+
+# 压缩后的文件
+*.min.css
+*.min.scss
+*.min.sass
+
+# 测试文件 (如果需要)
+# test*/
+# **/test*/
+
+# IDE 和编辑器文件
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# 日志文件
+*.log
+
+# 操作系统文件
+.DS_Store
+Thumbs.db

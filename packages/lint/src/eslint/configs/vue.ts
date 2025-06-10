@@ -1,6 +1,7 @@
 import type { Linter } from 'eslint';
 import * as pluginVue from 'eslint-plugin-vue';
 import globals from 'globals';
+import vueParser from 'vue-eslint-parser';
 
 import { vuePlugins } from '../plugins';
 import { allVueRules, importRules, qualityRules } from '../rules';
@@ -11,6 +12,7 @@ import { allVueRules, importRules, qualityRules } from '../rules';
 export const vueConfig: Linter.FlatConfig = {
   files: ['**/*.vue'],
   languageOptions: {
+    parser: vueParser,
     globals: globals.browser
   },
   plugins: vuePlugins,

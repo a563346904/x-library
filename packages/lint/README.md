@@ -1,6 +1,6 @@
 # @x-library/lint
 
-一个统一的代码规范配置包，包含 ESLint、Prettier 和 Commitlint 配置。
+一个统一的代码规范配置包，包含 ESLint、Prettier、Commitlint 和 Stylelint 配置。
 
 ## 功能特性
 
@@ -37,7 +37,7 @@ npm install @x-library/lint --save-dev
 # 或
 pnpm add @x-library/lint -D
 # 或
-yarn add @x-library/lint --dev
+yarn add @x-library/lint -D
 ```
 
 > **注意**: lint 包已经包含了所有必要的依赖，可以独立使用于任何项目。
@@ -131,6 +131,15 @@ export default strictCommitlintConfig();
 
 // 或使用宽松模式
 // export default relaxedCommitlintConfig();
+```
+
+### Stylelint 配置
+
+```javascript
+// stylelint.config.mjs
+import { stylelintConfig } from '@x-library/lint/stylelint';
+
+export default stylelintConfig();
 ```
 
 ### 生成 .prettierignore 文件
@@ -245,6 +254,10 @@ export default prettierConfig();
 // commitlint.config.mjs
 import { commitlintConfig } from '@x-library/lint/commitlint';
 export default commitlintConfig();
+
+// stylelint.config.mjs
+import { stylelintConfig } from '@x-library/lint/stylelint';
+export default stylelintConfig();
 ```
 
 ### 2. 配置 package.json

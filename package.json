@@ -15,6 +15,8 @@
     "dev": "turbo run dev",
     "test": "turbo run test",
     "clean": "turbo run clean",
+    "lint:css": "stylelint \"**/*.{css,scss,sass}\"",
+    "lint:css:fix": "stylelint \"**/*.{css,scss,sass}\" --fix",
     "example": "turbo run dev --filter=@x-library/example",
     "play:rsbuild-vue3-js": "pnpm --filter=rsbuild-project-vue3-js dev",
     "play:vite-vue3-js": "cd play/vite-project-vue3-js && npm run dev",
@@ -26,12 +28,19 @@
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
     "@commitlint/cli": "^19.8.1",
+    "@stylistic/stylelint-plugin": "^3.1.2",
     "@turbo/gen": "^1.11.1",
     "@types/jest": "^29.5.8",
     "@x-library/lint": "workspace:*",
     "husky": "^9.1.7",
     "jest": "^29.7.0",
     "lint-staged": "^16.1.0",
+    "postcss-scss": "^4.0.9",
+    "stylelint": "^16.20.0",
+    "stylelint-config-rational-order": "^0.1.2",
+    "stylelint-config-standard": "^38.0.0",
+    "stylelint-order": "^7.0.0",
+    "stylelint-scss": "^6.12.0",
     "ts-jest": "^29.1.1",
     "tsup": "^8.3.5",
     "turbo": "^1.11.1",
@@ -45,6 +54,10 @@
   "lint-staged": {
     "*.{js,jsx,ts,tsx,vue}": [
       "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{css,scss,sass,less}": [
+      "stylelint --fix",
       "prettier --write"
     ],
     "*.{json,md,yml,yaml}": [
