@@ -82,3 +82,6 @@ coverage/
 
 # Turbo
 .turbo
+
+# VitePress cache
+apps/docs/.vitepress/cache/

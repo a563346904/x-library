@@ -9,6 +9,9 @@ export default eslintConfig({
     '.turbo/**', // Turbo 构建缓存目录
     'pnpm-lock.yaml', // pnpm 的依赖锁定文件
 
+    // VitePress 相关
+    'apps/docs/.vitepress/cache/**', // VitePress 缓存目录
+
     // 测试相关
     '**/tests/**', // 忽略所有 tests 目录
     '**/*.test.*', // 忽略所有测试文件

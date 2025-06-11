@@ -1,0 +1,118 @@
+/* 主题切换平滑过渡效果 */
+html {
+  transition: color-scheme 0.5s ease;
+}
+
+/* 为主要元素添加过渡效果 */
+body,
+#app,
+.Layout,
+.VPNav,
+.VPNavBar,
+.VPLocalNav,
+.VPSidebar,
+.VPContent,
+.VPFooter,
+.VPHero,
+.VPButton,
+.VPFeature {
+  transition:
+    transform 1.5s ease,
+    background-color 0.5s ease,
+    border-color 0.5s ease,
+    color 0.5s ease,
+    box-shadow 0.3s ease,
+    transform 0.3s ease !important;
+}
+
+/* Logo 和图片的过渡 - 移除 opacity 过渡避免闪烁 */
+.VPImage,
+.VPImage img,
+svg {
+  transition:
+    fill 0.5s ease,
+    stroke 0.5s ease,
+    transform 0.3s ease !important;
+}
+
+/* 按钮悬停效果 */
+.VPButton:hover {
+  transform: translateY(-1px) !important;
+}
+
+/* Logo 悬停效果 - 减少变换幅度避免闪烁 */
+.VPNavBarTitle:hover .VPImage {
+  transform: scale(1.02) !important;
+}
+
+/* 特性卡片悬停效果 */
+.VPFeature:hover {
+  transform: translateY(-2px) !important;
+}
+
+/* 页面加载动画 */
+.VPContent {
+  animation: fade-in-up 0.6s ease-out;
+}
+
+@keyframes fade-in-up {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+/* 主题切换时强制过渡 - 但排除 logo 图片避免闪烁 */
+html.dark *:not(.VPImage):not(.VPImage img),
+html:not(.dark) *:not(.VPImage):not(.VPImage img) {
+  transition:
+    background-color 0.5s ease,
+    border-color 0.5s ease,
+    color 0.5s ease,
+    fill 0.5s ease,
+    stroke 0.5s ease !important;
+}
+
+/* Logo 图片特殊处理 - 主题切换时禁用过渡 */
+.VPImage,
+.VPImage img {
+  transition: transform 0.2s ease !important;
+}
+
+/* 减少移动设备上的过渡以提高性能 */
+@media (width <= 768px) {
+  body,
+  #app,
+  .Layout,
+  .VPNav,
+  .VPNavBar,
+  .VPLocalNav,
+  .VPSidebar,
+  .VPContent,
+  .VPFooter,
+  .VPHero,
+  .VPButton,
+  .VPFeature {
+    transition-duration: 0.3s !important;
+  }
+}
+
+/* 为偏好减少动画的用户提供无障碍设置 */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+
+  .VPContent {
+    animation: none;
+  }
+}

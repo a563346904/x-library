@@ -39,3 +39,6 @@ build/
 # 操作系统文件
 .DS_Store
 Thumbs.db
+
+# VitePress 主题文件 (框架类名不符合自定义规范)
+apps/docs/.vitepress/theme/custom.css

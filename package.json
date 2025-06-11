@@ -15,11 +15,18 @@
     "dev": "turbo run dev",
     "test": "turbo run test",
     "clean": "turbo run clean",
+    "lint:js": "eslint \"**/*.{js,jsx,ts,tsx,vue}\"",
+    "lint:js:fix": "eslint \"**/*.{js,jsx,ts,tsx,vue}\" --fix",
     "lint:css": "stylelint \"**/*.{css,scss,sass}\"",
     "lint:css:fix": "stylelint \"**/*.{css,scss,sass}\" --fix",
+    "lint": "pnpm lint:js && pnpm lint:css",
+    "lint:fix": "pnpm lint:js:fix && pnpm lint:css:fix",
     "example": "turbo run dev --filter=@x-library/example",
     "play:rsbuild-vue3-js": "pnpm --filter=rsbuild-project-vue3-js dev",
     "play:vite-vue3-js": "cd play/vite-project-vue3-js && npm run dev",
+    "docs:dev": "turbo run dev --filter=@x-library/docs",
+    "docs:build": "turbo run build --filter=@x-library/docs",
+    "docs:preview": "turbo run preview --filter=@x-library/docs",
     "changeset": "changeset",
     "version-packages": "changeset version",
     "release": "turbo run build --filter=!@x-library/docs && changeset publish",
@@ -57,7 +64,7 @@
       "prettier --write"
     ],
     "*.{css,scss,sass,less}": [
-      "stylelint --fix",
+      "stylelint --fix --allow-empty-input",
       "prettier --write"
     ],
     "*.{json,md,yml,yaml}": [

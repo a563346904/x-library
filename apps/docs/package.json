@@ -1,0 +1,19 @@
+{
+  "name": "@x-library/docs",
+  "version": "1.0.0",
+  "description": "Documentation for x-library lint tools",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vitepress dev",
+    "build": "vitepress build",
+    "preview": "vitepress preview"
+  },
+  "devDependencies": {
+    "vitepress": "^1.0.0",
+    "vue": "^3.4.0"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

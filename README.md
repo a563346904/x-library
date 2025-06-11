@@ -170,17 +170,10 @@ import eslintConfig from '@x-library/lint/eslint';
 
 export default eslintConfig({
   // 项目特定的忽略项
-  projectSpecificIgnores: [
-    '.turbo/**',
-    'pnpm-lock.yaml',
-    'custom-build/**'
-  ],
+  projectSpecificIgnores: ['.turbo/**', 'pnpm-lock.yaml', 'custom-build/**'],
 
   // 额外的忽略项
-  ignores: [
-    '*.config.js',
-    'temp/**'
-  ],
+  ignores: ['*.config.js', 'temp/**'],
 
   // 自定义规则
   rules: {
@@ -262,6 +255,7 @@ interface EslintConfigOptions {
 配置函数支持智能合并：
 
 ### 基础类型覆盖
+
 ```js
 eslintConfig({
   rules: {
@@ -271,6 +265,7 @@ eslintConfig({
 ```
 
 ### 数组合并
+
 ```js
 eslintConfig({
   ignores: ['custom/**'], // 会添加到默认忽略项后面
@@ -279,6 +274,7 @@ eslintConfig({
 ```
 
 ### 对象深度合并
+
 ```js
 eslintConfig({
   additionalConfigs: [
@@ -390,22 +386,26 @@ export default [
 ## 规则说明
 
 ### Import 管理规则
+
 - 自动排序和分组导入语句
 - 禁止重复导入
 - 强制导入后换行
 
 ### 代码质量规则
+
 - 禁用 `var`，推荐 `const` 和 `let`
 - 强制使用对象简写语法
 - 优先使用模板字符串
 
 ### Vue 3 专属规则
+
 - Composition API 最佳实践
 - 组件命名规范（PascalCase）
 - Props 和 Emits 类型声明
 - 性能优化建议
 
 ### TypeScript 规则
+
 - 合理的类型检查
 - 未使用变量检测
 - 类型安全最佳实践
