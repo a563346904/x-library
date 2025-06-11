@@ -19,8 +19,6 @@ coverage/
 
 # IDE and OS files
 .DS_Store
-.vscode/settings.json
-.idea/
 
 # Log files
 *.log

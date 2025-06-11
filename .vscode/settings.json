@@ -5,7 +5,6 @@
   // 设置默认格式化工具为 Prettier
   "editor.defaultFormatter": "esbenp.prettier-vscode",
 
-
   // ESLint 配置
   "eslint.enable": true,
   "eslint.validate": [
@@ -28,20 +27,8 @@
   },
 
   "stylelint.enable": true,
-  "stylelint.validate": [
-    "css",
-    "scss",
-    "sass",
-    "less",
-    "vue"
-  ],
-  "stylelint.snippet": [
-    "css",
-    "scss",
-    "sass",
-    "less",
-    "vue"
-  ],
+  "stylelint.validate": ["css", "scss", "sass", "less", "vue"],
+  "stylelint.snippet": ["css", "scss", "sass", "less", "vue"],
 
   // 保存时的代码操作
   "editor.codeActionsOnSave": {
