@@ -40,14 +40,14 @@ pnpm add -D @x-library/lint
 在项目根目录创建配置文件：
 
 ```javascript
-// eslint.config.js
+// eslint.config.mjs
 import { eslintConfig } from '@x-library/lint/eslint';
 
 export default eslintConfig();
 ```
 
 ```javascript
-// prettier.config.js
+// prettier.config.mjs
 import { prettierConfig } from '@x-library/lint/prettier';
 
 export default prettierConfig();
@@ -83,17 +83,17 @@ pnpm-lock.yaml
 ```
 
 ```javascript
-// commitlint.config.js
+// commitlint.config.mjs
 import { commitlintConfig } from '@x-library/lint/commitlint';
 
 export default commitlintConfig();
 ```
 
 ```javascript
-// stylelint.config.js
-import { stylelintConfig } from '@x-library/lint/stylelint';
+// stylelint.config.mjs
+import createStylelintConfig from '@x-library/lint/stylelint';
 
-export default stylelintConfig;
+export default createStylelintConfig();
 ```
 
 ```
@@ -132,6 +132,11 @@ lib/
     "lint": "pnpm lint:js && pnpm lint:css",
     "lint:fix": "pnpm lint:js:fix && pnpm lint:css:fix",
     "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx,vue}": ["eslint --fix", "prettier --write"],
+    "*.{css,scss,sass,less}": ["stylelint --fix --allow-empty-input", "prettier --write"],
+    "*.{json,md,yml,yaml}": ["prettier --write"]
   }
 }
 ```
@@ -139,13 +144,6 @@ lib/
 ## 📋 详细使用
 
 见文档
-
-```javascript
-// stylelint.config.js
-import { createStylelintConfig } from '@x-library/lint/stylelint';
-
-export default createStylelintConfig();
-```
 
 ## 🎯 支持的文件类型
 
@@ -161,6 +159,8 @@ export default createStylelintConfig();
 
 本包已将 husky 和 lint-staged 作为 peerDependencies 引入，安装此包时会自动安装这些依赖。下面是配置方法：
 
+在 `package.json` 中添加必要的配置：
+
 ```json
 // package.json
 {
@@ -175,18 +175,48 @@ export default createStylelintConfig();
 }
 ```
 
-然后初始化 husky 并添加 Git hooks：
+然后初始化并设置 Git hooks：
 
 ```bash
-# 初始化 husky
+# 确保项目是一个 Git 仓库
+git init
+
+# 初始化 husky（这一步会创建 .husky 目录）
 npx husky init
-
-# 添加 pre-commit 钩子
-npx husky add .husky/pre-commit "npx lint-staged"
-
-# 添加 commit-msg 钩子
-npx husky add .husky/commit-msg "npx --no -- commitlint --edit $1"
 ```
+
+由于 husky add 命令已被弃用，建议直接手动创建钩子文件：
+
+1. 创建 `.husky/pre-commit` 文件，内容如下：
+
+```
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+npx lint-staged
+```
+
+2. 创建 `.husky/commit-msg` 文件，内容如下：
+
+```
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+npx --no -- commitlint --edit "$1"
+```
+
+3. 确保钩子文件具有执行权限：
+
+```bash
+chmod +x .husky/pre-commit .husky/commit-msg
+```
+
+确认已生成以下文件：
+
+- `.husky/pre-commit`
+- `.husky/commit-msg`
+- `.husky/_/.gitignore`
+- `.husky/_/husky.sh`
 
 ### 2. VSCode 配置
 
