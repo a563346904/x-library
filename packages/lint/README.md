@@ -287,3 +287,60 @@ chmod +x .husky/pre-commit .husky/commit-msg
 - Prettier - Code formatter
 - Stylelint
 - Vue Language Features (Volar)
+
+## ⚠️ 注意事项
+
+1. **关于 peerDependencies 安装机制**：
+
+   - **npm 7 及以上版本**：会自动安装 peerDependencies 声明的依赖
+   - **npm 7 以下版本**：不会自动安装 peerDependencies，需要手动安装
+
+   如果您使用的是 npm 7 以下版本，请手动安装以下依赖：
+
+   ```json
+   {
+     "@eslint/js": "^9.23.0",
+     "@stylistic/stylelint-plugin": "^3.1.2",
+     "@typescript-eslint/eslint-plugin": "^8.33.1",
+     "@typescript-eslint/parser": "^8.33.1",
+     "eslint": "^9.0.0",
+     "eslint-config-prettier": "^9.1.0",
+     "eslint-plugin-import": "^2.31.0",
+     "eslint-plugin-prettier": "^5.4.1",
+     "eslint-plugin-vue": "^10.1.0",
+     "globals": "^16.0.0",
+     "husky": "^9.1.7",
+     "lint-staged": "^16.1.0",
+     "postcss-html": "^1.6.0",
+     "postcss-scss": "^4.0.9",
+     "prettier": "^3.0.0",
+     "stylelint": "^16.0.0",
+     "stylelint-config-rational-order": "^0.1.2",
+     "stylelint-config-standard": "^38.0.0",
+     "stylelint-order": "^7.0.0",
+     "stylelint-scss": "^6.12.0",
+     "typescript-eslint": "^8.33.1",
+     "vue-eslint-parser": "^10.1.3"
+   }
+   ```
+
+2. **使用 pnpm 的特殊注意事项**：
+
+   由于 pnpm 使用严格的模块隔离结构，它会将依赖安装到 `.pnpm` 目录而非顶层 `node_modules/`，这可能导致以下问题：
+
+   - ❌ ESLint 无法找到 parser 或 plugin
+   - ❌ VSCode 无法自动识别 ESLint 插件或报错
+   - ❌ 自动修复功能不可用
+
+   **解决方案**：
+
+   1. **手动安装方案**：在您的项目中手动安装所有 peerDependencies（如上述命令所示）
+
+   2. **配置提升方案**：在项目根目录创建或编辑 `.npmrc` 文件，添加以下配置以提升 ESLint 插件位置：
+
+      ```
+      public-hoist-pattern[]=*eslint*
+      public-hoist-pattern[]=*prettier*
+      public-hoist-pattern[]=*stylelint*
+      public-hoist-pattern[]=@commitlint/*
+      ```
