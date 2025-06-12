@@ -1,16 +1,20 @@
 import { defineConfig } from 'vitepress';
 
+// 确保 base 路径正确设置
+const baseUrl = '/x-library/';
+
 export default defineConfig({
   title: 'X Library',
   description: '统一的代码规范配置包',
   lang: 'zh-CN',
+  base: baseUrl,
 
   head: [
     [
       'link',
       {
         rel: 'icon',
-        href: '/logo-dark.svg',
+        href: 'logo-dark.svg',
         type: 'image/svg+xml',
         media: '(prefers-color-scheme: dark)'
       }
@@ -19,7 +23,7 @@ export default defineConfig({
       'link',
       {
         rel: 'icon',
-        href: '/logo-light.svg',
+        href: 'logo-light.svg',
         type: 'image/svg+xml',
         media: '(prefers-color-scheme: light)'
       }
@@ -28,8 +32,8 @@ export default defineConfig({
 
   themeConfig: {
     logo: {
-      light: '/logo-light.svg',
-      dark: '/logo-dark.svg',
+      light: 'logo-light.svg',
+      dark: 'logo-dark.svg',
       width: 24,
       height: 24
     },
