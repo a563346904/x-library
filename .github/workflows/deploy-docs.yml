@@ -7,6 +7,11 @@ on:
   # 允许手动触发
   workflow_dispatch:
 
+# 设置 GITHUB_TOKEN 的权限
+permissions:
+  contents: write
+  pages: write
+
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -51,4 +56,5 @@ jobs:
         with:
           folder: apps/docs/.vitepress/dist # 构建输出目录
           branch: gh-pages # 部署到的分支
+          token: ${{ secrets.GITHUB_TOKEN }} # 使用 GitHub 提供的 token
           clean: true # 自动清理旧文件
