@@ -67,7 +67,8 @@ const defaultStylelintConfig: Config = {
     'scss/at-rule-no-unknown': true,
 
     // 强制 BEM 风格命名类名
-    'selector-class-pattern': '^([a-z0-9]+-)*[a-z0-9]+$',
+    'selector-class-pattern':
+      '^[a-z0-9]+(-[a-z0-9]+)*(__[a-z0-9]+(-[a-z0-9]+)*)?(--[a-z0-9]+(-[a-z0-9]+)*)?$',
 
     // 禁止 URL 使用相对方案，确保所有 URL 具有明确的方案
     'function-url-no-scheme-relative': true,
