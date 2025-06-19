@@ -22,7 +22,7 @@
     "lint": "pnpm lint:js && pnpm lint:css",
     "lint:fix": "pnpm lint:js:fix && pnpm lint:css:fix",
     "example": "turbo run dev --filter=@x-library/example",
-    "play:rsbuild-vue3-js": "pnpm --filter=rsbuild-project-vue3-js dev",
+    "play:rsbuild-vue3-js": "pnpm --filter=rsbuild-project-vue3 dev",
     "play:vite-vue3-js": "cd play/vite-project-vue3-js && npm run dev",
     "docs:dev": "turbo run dev --filter=@x-library/docs",
     "docs:build": "turbo run build --filter=@x-library/docs",
@@ -35,6 +35,7 @@
   "devDependencies": {
     "@changesets/cli": "^2.27.1",
     "@commitlint/cli": "^19.8.1",
+    "@rsbuild/core": "^1.3.15",
     "@stylistic/stylelint-plugin": "^3.1.2",
     "@turbo/gen": "^1.11.1",
     "@types/jest": "^29.5.8",
@@ -70,5 +71,9 @@
     "*.{json,md,yml,yaml}": [
       "prettier --write"
     ]
+  },
+  "dependencies": {
+    "@types/micromatch": "^4.0.9",
+    "micromatch": "^4.0.8"
   }
 }
