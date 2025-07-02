@@ -1,3 +1,3 @@
 <template>
-  <div>user</div>
+  <div>user <router-view /></div>
 </template>
