@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@x-library/vue": "workspace:*",
+    "@x-library/vue-router": "workspace:^",
     "axios": "^1.9.0",
     "vue": "^3.5.13",
     "vue-router": "^4.5.1"

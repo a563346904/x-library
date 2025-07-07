@@ -204,9 +204,18 @@ importers:
 
   packages/vue-router:
     dependencies:
+      '@x-library/core':
+        specifier: workspace:*
+        version: link:../core
       fast-glob:
         specifier: ^3.3.3
         version: 3.3.3
+      magic-string:
+        specifier: ^0.30.17
+        version: 0.30.17
+      pathe:
+        specifier: ^2.0.3
+        version: 2.0.3
       rspack-plugin-virtual-module:
         specifier: ^1.0.1
         version: 1.0.1
@@ -232,6 +241,9 @@ importers:
       typescript:
         specifier: ^5.0.0
         version: 5.8.3
+      unplugin:
+        specifier: ^2.3.5
+        version: 2.3.5
       vitest:
         specifier: ^1.0.0
         version: 1.6.1(@types/node@24.0.4)
@@ -241,6 +253,9 @@ importers:
       '@x-library/vue':
         specifier: workspace:*
         version: link:../../packages/vue
+      '@x-library/vue-router':
+        specifier: workspace:^
+        version: link:../../packages/vue-router
       axios:
         specifier: ^1.9.0
         version: 1.9.0
@@ -8335,7 +8350,6 @@ packages:
 
   /pathe@2.0.3:
     resolution: {integrity: sha512-WUjGcAqP1gQacoQe+OBJsFA7Ld4DyXuUIjZ5cc75cLHvJ7dtNsTugphxIADwspS+AraAUePCKrSVtPLFj/F88w==}
-    dev: true
 
   /pathval@1.1.1:
     resolution: {integrity: sha512-Dp6zGqpTdETdR63lehJYPeIOqpiNBNtc7BpWSLrOje7UaIsE5aY92r/AunQA7rsXvet3lrJ3JnZX29UPTKXyKQ==}
@@ -10532,6 +10546,15 @@ packages:
     resolution: {integrity: sha512-gptHNQghINnc/vTGIk0SOFGFNXw7JVrlRUtConJRlvaw6DuX0wO5Jeko9sWrMBhh+PsYAZ7oXAiOnf/UKogyiw==}
     engines: {node: '>= 10.0.0'}
 
+  /unplugin@2.3.5:
+    resolution: {integrity: sha512-RyWSb5AHmGtjjNQ6gIlA67sHOsWpsbWpwDokLwTcejVdOjEkJZh7QKu14J00gDDVSh8kGH4KYC/TNBceXFZhtw==}
+    engines: {node: '>=18.12.0'}
+    dependencies:
+      acorn: 8.14.1
+      picomatch: 4.0.2
+      webpack-virtual-modules: 0.6.2
+    dev: true
+
   /unset-value@1.0.0:
     resolution: {integrity: sha512-PcA2tsuGSF9cnySLHTLSh2qrQiJ70mn+r+Glzxv2TWZblxsxCC52BDlZoPCsz7STd9pN7EZetkWZBAvk4cgZdQ==}
     engines: {node: '>=0.10.0'}
@@ -11093,6 +11116,10 @@ packages:
   /webpack-sources@3.3.2:
     resolution: {integrity: sha512-ykKKus8lqlgXX/1WjudpIEjqsafjOTcOJqxnAbMLAu/KCsDCJ6GBtvscewvTkrn24HsnvFwrSCbenFrhtcCsAA==}
     engines: {node: '>=10.13.0'}
+    dev: true
+
+  /webpack-virtual-modules@0.6.2:
+    resolution: {integrity: sha512-66/V2i5hQanC51vBQKPH4aI8NMAcBW59FVBs+rC7eGHupMyfn34q7rZIE+ETlJ+XTevqfUhVVBgSUNSW2flEUQ==}
     dev: true
 
   /webpack@5.99.9(esbuild@0.25.5):

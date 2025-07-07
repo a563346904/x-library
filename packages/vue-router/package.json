@@ -26,6 +26,11 @@
       "types": "./dist/webpack/index.d.ts",
       "require": "./dist/webpack/index.js",
       "import": "./dist/webpack/index.mjs"
+    },
+    "./layouts": {
+      "types": "./src/layouts/index.ts",
+      "import": "./src/layouts/index.ts",
+      "require": "./src/layouts/index.ts"
     }
   },
   "files": [
@@ -43,7 +48,10 @@
     "layouts"
   ],
   "dependencies": {
+    "@x-library/core": "workspace:*",
     "fast-glob": "^3.3.3",
+    "magic-string": "^0.30.17",
+    "pathe": "^2.0.3",
     "rspack-plugin-virtual-module": "^1.0.1"
   },
   "peerDependencies": {
@@ -56,6 +64,7 @@
     "ts-node": "^10.9.1",
     "tsup": "^8.0.0",
     "typescript": "^5.0.0",
+    "unplugin": "^2.3.5",
     "vitest": "^1.0.0"
   }
 }

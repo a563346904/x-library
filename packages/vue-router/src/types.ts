@@ -1,3 +1,5 @@
+import type { NamespaceOptions } from '@x-library/core';
+
 import { PathSegmentType } from './enums';
 
 /**
@@ -58,6 +60,12 @@ export interface RouteOptions {
    * @default 'virtual:'
    */
   virtualModule: string;
+
+  /**
+   * 组件命名空间配置
+   * @default 'X'
+   */
+  namespace?: string | NamespaceOptions;
 }
 
 /**
@@ -163,6 +171,16 @@ export interface RouteInfo {
    * 组件元数据
    */
   meta?: Record<string, any>;
+
+  /**
+   * 重定向配置（从 definePageMeta 中提取）
+   */
+  redirect?: string | Record<string, unknown>;
+
+  /**
+   * 路由别名（从 definePageMeta 中提取）
+   */
+  alias?: string | string[];
 }
 
 /**

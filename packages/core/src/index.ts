@@ -28,4 +28,7 @@ export const createXLibrary = (config: XLibraryConfig): XLibrary => {
   return new XLibrary(config);
 };
 
+// 导出命名空间功能
+export * from './namespace';
+
 export default XLibrary;

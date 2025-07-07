@@ -21,5 +21,12 @@ export default eslintConfig({
     // 额外的锁文件
     'yarn.lock',
     'package-lock.json'
-  ]
+  ],
+
+  // 添加全局变量
+  languageOptions: {
+    globals: {
+      definePageMeta: 'readonly'
+    }
+  }
 });

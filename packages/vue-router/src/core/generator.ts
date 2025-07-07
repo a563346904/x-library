@@ -1,9 +1,11 @@
+import { readFile } from 'fs/promises';
 import * as path from 'path';
 
 import { ImportMode } from '../enums';
 import { RouteDefinition, RouteInfo, RouteOptions } from '../types';
 
 import { parsePageFilePath } from './parser';
+import { extractPageMeta } from './transform';
 
 /**
  * 创建路由信息对象
@@ -12,7 +14,11 @@ import { parsePageFilePath } from './parser';
  * @param options 路由选项
  * @returns 路由信息对象
  */
-function createRouteInfo(filePath: string, rootDir: string, options: RouteOptions): RouteInfo {
+async function createRouteInfo(
+  filePath: string,
+  rootDir: string,
+  options: RouteOptions
+): Promise<RouteInfo> {
   const { importMode = ImportMode.Async, pagesDir } = options;
 
   // 解析文件路径，获取路由信息
@@ -32,20 +38,46 @@ function createRouteInfo(filePath: string, rootDir: string, options: RouteOption
   const componentImport =
     importMode === ImportMode.Async ? `() => import('${aliasPath}')` : `SYNC_IMPORT:${aliasPath}`;
 
-  return {
+  // 读取文件内容并提取 pageMeta
+  let pageMeta: any = null;
+  try {
+    const absoluteFilePath = path.resolve(rootDir, componentPath);
+    const fileContent = await readFile(absoluteFilePath, 'utf-8');
+    pageMeta = extractPageMeta(fileContent);
+  } catch (error) {
+    // 文件读取失败，继续处理
+    console.warn(`Failed to read file ${componentPath}:`, error);
+  }
+
+  // 合并元数据
+  const meta = {
+    ...parsedPath.meta,
+    // 添加其他元数据
+    isDynamic: parsedPath.isDynamic,
+    isIndex: parsedPath.isIndex,
+    isCatchAll: parsedPath.isCatchAll,
+    // 添加 pageMeta 中的 meta 字段
+    ...(pageMeta?.meta || {})
+  };
+
+  // 如果 pageMeta 中定义了布局，添加到 meta 中
+  if (pageMeta?.layout !== undefined) {
+    meta.layout = pageMeta.layout;
+  }
+
+  const routeInfo: RouteInfo = {
     relativePath: filePath,
     absolutePath: parsedPath.absolutePath,
-    routePath: parsedPath.routePath,
-    routeName: parsedPath.routeName,
+    routePath: pageMeta?.path || parsedPath.routePath, // 优先使用 pageMeta 中定义的路径
+    routeName: pageMeta?.name || parsedPath.routeName, // 优先使用 pageMeta 中定义的名称
     componentImport,
-    meta: {
-      ...parsedPath.meta,
-      // 添加其他元数据
-      isDynamic: parsedPath.isDynamic,
-      isIndex: parsedPath.isIndex,
-      isCatchAll: parsedPath.isCatchAll
-    }
+    meta,
+    // 添加 pageMeta 中定义的其他路由属性
+    ...(pageMeta?.redirect && { redirect: pageMeta.redirect }),
+    ...(pageMeta?.alias && { alias: pageMeta.alias })
   };
+
+  return routeInfo;
 }
 
 /**
@@ -54,13 +86,24 @@ function createRouteInfo(filePath: string, rootDir: string, options: RouteOption
  * @returns 路由定义对象
  */
 function createRouteDefinition(routeInfo: RouteInfo): RouteDefinition {
-  return {
+  const route: RouteDefinition = {
     path: routeInfo.routePath,
     name: routeInfo.routeName,
     component: routeInfo.componentImport,
     children: [],
     meta: routeInfo.meta
   };
+
+  // 添加其他可选属性
+  if (routeInfo.redirect) {
+    route.redirect = routeInfo.redirect;
+  }
+
+  if (routeInfo.alias) {
+    route.alias = routeInfo.alias;
+  }
+
+  return route;
 }
 
 /**
@@ -188,8 +231,9 @@ export async function generateRoutes(
   // 获取项目根目录
   const rootDir = process.cwd();
 
-  // 将文件路径转换为路由信息
-  const routeInfoList = files.map(filePath => createRouteInfo(filePath, rootDir, options));
+  // 将文件路径转换为路由信息（现在是异步的）
+  const routeInfoPromises = files.map(filePath => createRouteInfo(filePath, rootDir, options));
+  const routeInfoList = await Promise.all(routeInfoPromises);
 
   // 构建路由树
   const routeTree = buildRouteTree(routeInfoList);

@@ -17,7 +17,11 @@ export default defineConfig({
     // 添加我们的自动路由插件
     rsAutoRoutes({
       pagesDir: 'src/pages',
-      extensions: ['vue']
+      layoutsDir: 'src/layouts',
+      extensions: ['vue'],
+      enableLayouts: true,
+      defaultLayout: 'default',
+      namespace: 'X' // 组件名称将是 XLayout
     })
   ]
 });
