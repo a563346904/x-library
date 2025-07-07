@@ -59,6 +59,12 @@ export async function configureRspack(
     '~virtual-layouts-export': layoutsExportContent
   };
 
+  // 只在启用 layouts 功能时添加 macros 模块
+  if (options.enableLayouts) {
+    virtualModules['~virtual-macros'] =
+      `export { definePageMeta } from '@x-library/vue-router/macros';`;
+  }
+
   // 使用虚拟模块插件
   const virtualModulePlugin = new VirtualModulePlugin(virtualModules);
 

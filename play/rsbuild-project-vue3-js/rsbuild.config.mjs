@@ -16,12 +16,7 @@ export default defineConfig({
     pluginVue(),
     // 添加我们的自动路由插件
     rsAutoRoutes({
-      pagesDir: 'src/pages',
-      layoutsDir: 'src/layouts',
-      extensions: ['vue'],
-      enableLayouts: true,
-      defaultLayout: 'default',
-      namespace: 'X' // 组件名称将是 XLayout
+      enableLayouts: true
     })
   ]
 });

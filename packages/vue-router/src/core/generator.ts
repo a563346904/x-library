@@ -8,6 +8,58 @@ import { parsePageFilePath } from './parser';
 import { extractPageMeta } from './transform';
 
 /**
+ * 读取页面文件并提取元数据
+ */
+async function extractFilePageMeta(
+  componentPath: string,
+  rootDir: string
+): Promise<Record<string, unknown> | null> {
+  try {
+    const absoluteFilePath = path.resolve(rootDir, componentPath);
+    const fileContent = await readFile(absoluteFilePath, 'utf-8');
+    return extractPageMeta(fileContent);
+  } catch (error) {
+    console.warn(`Failed to read file ${componentPath}:`, error);
+    return null;
+  }
+}
+
+/**
+ * 创建组件导入语句
+ */
+function createComponentImport(
+  componentPath: string,
+  importMode: ImportMode | 'sync' | 'async'
+): string {
+  const aliasPath = componentPath.replace(/^src\//, '@/');
+  return importMode === ImportMode.Async
+    ? `() => import('${aliasPath}')`
+    : `SYNC_IMPORT:${aliasPath}`;
+}
+
+/**
+ * 合并路由元数据
+ */
+function mergeRouteMeta(
+  parsedPath: any,
+  pageMeta: Record<string, unknown> | null
+): Record<string, unknown> {
+  const meta = {
+    ...parsedPath.meta,
+    isDynamic: parsedPath.isDynamic,
+    isIndex: parsedPath.isIndex,
+    isCatchAll: parsedPath.isCatchAll,
+    ...(pageMeta?.meta || {})
+  };
+
+  if (pageMeta?.layout !== undefined) {
+    (meta as any).layout = pageMeta.layout;
+  }
+
+  return meta;
+}
+
+/**
  * 创建路由信息对象
  * @param filePath 相对于pages目录的文件路径
  * @param rootDir 项目根目录路径
@@ -21,61 +73,33 @@ async function createRouteInfo(
 ): Promise<RouteInfo> {
   const { importMode = ImportMode.Async, pagesDir } = options;
 
-  // 解析文件路径，获取路由信息
   const parsedPath = parsePageFilePath(filePath, rootDir, {
     includeParentInName: true,
     routeNameSeparator: '-',
     keepIndexInPath: false
   });
 
-  // 组件导入路径（相对于项目根目录）
   const componentPath = path.join(pagesDir, filePath).replace(/\\/g, '/');
-
-  // 转换成'@/'开头的别名路径, 'src/pages/home.vue' -> '@/pages/home.vue'
-  const aliasPath = componentPath.replace(/^src\//, '@/');
-
-  // 创建导入语句
-  const componentImport =
-    importMode === ImportMode.Async ? `() => import('${aliasPath}')` : `SYNC_IMPORT:${aliasPath}`;
-
-  // 读取文件内容并提取 pageMeta
-  let pageMeta: any = null;
-  try {
-    const absoluteFilePath = path.resolve(rootDir, componentPath);
-    const fileContent = await readFile(absoluteFilePath, 'utf-8');
-    pageMeta = extractPageMeta(fileContent);
-  } catch (error) {
-    // 文件读取失败，继续处理
-    console.warn(`Failed to read file ${componentPath}:`, error);
-  }
-
-  // 合并元数据
-  const meta = {
-    ...parsedPath.meta,
-    // 添加其他元数据
-    isDynamic: parsedPath.isDynamic,
-    isIndex: parsedPath.isIndex,
-    isCatchAll: parsedPath.isCatchAll,
-    // 添加 pageMeta 中的 meta 字段
-    ...(pageMeta?.meta || {})
-  };
-
-  // 如果 pageMeta 中定义了布局，添加到 meta 中
-  if (pageMeta?.layout !== undefined) {
-    meta.layout = pageMeta.layout;
-  }
+  const componentImport = createComponentImport(componentPath, importMode);
+  const pageMeta = await extractFilePageMeta(componentPath, rootDir);
+  const meta = mergeRouteMeta(parsedPath, pageMeta);
 
   const routeInfo: RouteInfo = {
     relativePath: filePath,
     absolutePath: parsedPath.absolutePath,
-    routePath: pageMeta?.path || parsedPath.routePath, // 优先使用 pageMeta 中定义的路径
-    routeName: pageMeta?.name || parsedPath.routeName, // 优先使用 pageMeta 中定义的名称
+    routePath: (pageMeta?.path as string) || parsedPath.routePath,
+    routeName: (pageMeta?.name as string) || parsedPath.routeName,
     componentImport,
-    meta,
-    // 添加 pageMeta 中定义的其他路由属性
-    ...(pageMeta?.redirect && { redirect: pageMeta.redirect }),
-    ...(pageMeta?.alias && { alias: pageMeta.alias })
+    meta
   };
+
+  if (pageMeta?.redirect) {
+    routeInfo.redirect = pageMeta.redirect as any;
+  }
+
+  if (pageMeta?.alias) {
+    routeInfo.alias = pageMeta.alias as any;
+  }
 
   return routeInfo;
 }
@@ -258,44 +282,52 @@ export function generateRoutesCode(
   let componentNameCounter = 0;
   const componentNameMap = new Map<string, string>();
 
+  // 处理同步导入组件
+  function processSyncComponent(processedRoute: RouteDefinition, importPath: string): void {
+    if (!componentNameMap.has(importPath)) {
+      const componentName = `Component${componentNameCounter++}`;
+      componentNameMap.set(importPath, componentName);
+      imports.push(`import ${componentName} from '${importPath}';`);
+      imports.push(
+        `if (${componentName} && !${componentName}.name) { ${componentName}.name = '${processedRoute.name || 'UnnamedComponent'}'; }`
+      );
+    }
+    processedRoute.component = componentNameMap.get(importPath)!;
+  }
+
+  // 处理异步导入组件
+  function processAsyncComponent(processedRoute: RouteDefinition): void {
+    const routeName = processedRoute.name || 'UnnamedComponent';
+    const componentStr = processedRoute.component as string;
+    processedRoute.component = `__ASYNC_IMPORT_START__${componentStr.substring(6)}__ROUTE_NAME__${routeName}__ASYNC_IMPORT_END__`;
+  }
+
+  // 处理单个路由的组件导入
+  function processRouteComponent(route: RouteDefinition): RouteDefinition {
+    const processedRoute = { ...route };
+
+    if (typeof processedRoute.component === 'string') {
+      if (importMode === ImportMode.Sync && processedRoute.component.startsWith('SYNC_IMPORT:')) {
+        const importPath = processedRoute.component.replace('SYNC_IMPORT:', '');
+        processSyncComponent(processedRoute, importPath);
+      } else if (
+        importMode === ImportMode.Async &&
+        processedRoute.component.startsWith('() => import(')
+      ) {
+        processAsyncComponent(processedRoute);
+      }
+    }
+
+    if (processedRoute.children && processedRoute.children.length > 0) {
+      processedRoute.children = processRoutes(processedRoute.children);
+    }
+
+    return processedRoute;
+  }
+
   // 递归处理路由，收集同步导入的组件
   function processRoutes(routes: RouteDefinition[]): RouteDefinition[] {
-    return routes.map(route => {
-      const processedRoute = { ...route };
-
-      if (typeof processedRoute.component === 'string') {
-        if (importMode === ImportMode.Sync && processedRoute.component.startsWith('SYNC_IMPORT:')) {
-          // 同步导入模式：提取导入路径并生成组件名
-          const importPath = processedRoute.component.replace('SYNC_IMPORT:', '');
-
-          if (!componentNameMap.has(importPath)) {
-            const componentName = `Component${componentNameCounter++}`;
-            componentNameMap.set(importPath, componentName);
-            imports.push(`import ${componentName} from '${importPath}';`);
-            // 设置组件名称：如果组件没有名称，使用路由名称
-            imports.push(
-              `if (${componentName} && !${componentName}.name) { ${componentName}.name = '${processedRoute.name || 'UnnamedComponent'}'; }`
-            );
-          }
-
-          processedRoute.component = componentNameMap.get(importPath)!;
-        } else if (
-          importMode === ImportMode.Async &&
-          processedRoute.component.startsWith('() => import(')
-        ) {
-          // 异步导入模式：包装导入函数以设置组件名称
-          const routeName = processedRoute.name || 'UnnamedComponent';
-          // 使用特殊标记来标识异步导入函数，避免JSON.stringify破坏格式
-          processedRoute.component = `__ASYNC_IMPORT_START__${processedRoute.component.substring(6)}__ROUTE_NAME__${routeName}__ASYNC_IMPORT_END__`;
-        }
-      }
-
-      if (processedRoute.children && processedRoute.children.length > 0) {
-        processedRoute.children = processRoutes(processedRoute.children);
-      }
-
-      return processedRoute;
-    });
+    return routes.map(processRouteComponent);
   }
 
   const processedRoutes = processRoutes(routes);

@@ -31,6 +31,11 @@
       "types": "./src/layouts/index.ts",
       "import": "./src/layouts/index.ts",
       "require": "./src/layouts/index.ts"
+    },
+    "./macros": {
+      "types": "./src/layouts/macros.ts",
+      "import": "./src/layouts/macros.ts",
+      "require": "./src/layouts/macros.ts"
     }
   },
   "files": [

@@ -1,4 +1,6 @@
 import type { NamespaceOptions } from '@x-library/core';
+import type { Component } from 'vue';
+import type { NavigationGuard, RouteLocationNormalized } from 'vue-router';
 
 import { PathSegmentType } from './enums';
 
@@ -105,7 +107,7 @@ export interface RouteDefinition {
   /**
    * 路由组件或组件导入函数
    */
-  component: string | (() => Promise<any>);
+  component: string | (() => Promise<{ default: Component }>);
 
   /**
    * 子路由
@@ -115,17 +117,23 @@ export interface RouteDefinition {
   /**
    * 路由元数据
    */
-  meta?: Record<string, any>;
+  meta?: Record<string, unknown>;
 
   /**
    * 路由属性
    */
-  props?: boolean | Record<string, any> | ((route: any) => Record<string, any>);
+  props?:
+    | boolean
+    | Record<string, unknown>
+    | ((route: RouteLocationNormalized) => Record<string, unknown>);
 
   /**
    * 重定向
    */
-  redirect?: string | Record<string, any> | ((to: any) => string | Record<string, any>);
+  redirect?:
+    | string
+    | Record<string, unknown>
+    | ((to: RouteLocationNormalized) => string | Record<string, unknown>);
 
   /**
    * 别名
@@ -135,7 +143,7 @@ export interface RouteDefinition {
   /**
    * 路由进入前守卫
    */
-  beforeEnter?: (to: any, from: any, next: any) => void;
+  beforeEnter?: NavigationGuard;
 }
 
 /**
@@ -170,7 +178,7 @@ export interface RouteInfo {
   /**
    * 组件元数据
    */
-  meta?: Record<string, any>;
+  meta?: Record<string, unknown>;
 
   /**
    * 重定向配置（从 definePageMeta 中提取）

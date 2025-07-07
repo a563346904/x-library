@@ -51,7 +51,8 @@ export function rsAutoRoutes(userOptions: Partial<RouteOptions> = {}): RsbuildPl
 
   // 插件内部状态
   let virtualModulePluginInstance: VirtualModulePlugin;
-  let watchers: {
+  let virtualModulePluginPromise: Promise<VirtualModulePlugin>;
+  const watchers: {
     pageWatcher?: ReturnType<typeof chokidar.watch>;
     layoutWatcher?: ReturnType<typeof chokidar.watch>;
   } = {};
@@ -60,21 +61,39 @@ export function rsAutoRoutes(userOptions: Partial<RouteOptions> = {}): RsbuildPl
     name: 'rsbuild-plugin-vue-router',
 
     setup(api) {
-      // 修改 RSpack 配置
-      api.modifyRspackConfig(async config => {
-        // 配置虚拟模块和监听选项
-        const result = await configureRspack(config, options);
-        virtualModulePluginInstance = result.virtualModulePlugin;
+      // 创建一个 Promise 来跟踪虚拟模块插件的初始化
+      virtualModulePluginPromise = new Promise<VirtualModulePlugin>(resolve => {
+        // 修改 RSpack 配置
+        api.modifyRspackConfig(async config => {
+          // 配置虚拟模块和监听选项
+          const result = await configureRspack(config, options);
+          virtualModulePluginInstance = result.virtualModulePlugin;
 
-        // 添加 definePageMeta 转换插件
-        const rspackPlugin = unpluginDefinePageMeta.rspack();
-        config.plugins = config.plugins || [];
-        config.plugins.push(rspackPlugin);
+          // 解析 Promise，表示插件已初始化
+          resolve(virtualModulePluginInstance);
+
+          // 只在启用 layouts 功能时添加 definePageMeta 转换插件
+          if (options.enableLayouts) {
+            const rspackPlugin = unpluginDefinePageMeta.rspack();
+            config.plugins = config.plugins || [];
+            config.plugins.push(rspackPlugin);
+          }
+        });
       });
 
       // 在开发服务器启动前设置文件监听
       api.onBeforeStartDevServer(() => {
-        watchers = setupFileWatcher(options, virtualModulePluginInstance);
+        // 使用 Promise.then 而不是 async/await，保持回调函数同步
+        virtualModulePluginPromise
+          .then(plugin => {
+            const result = setupFileWatcher(options, plugin);
+            watchers.pageWatcher = result.pageWatcher;
+            watchers.layoutWatcher = result.layoutWatcher;
+            console.log('[vue-router] 文件监听已设置');
+          })
+          .catch(error => {
+            console.error('[vue-router] 设置文件监听失败:', error);
+          });
       });
 
       // 清理资源

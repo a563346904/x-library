@@ -1,31 +1,16 @@
 import MagicString from 'magic-string';
+import type { SourceMap } from 'magic-string';
 
 /**
- * 转换 definePageMeta 宏
- * 提取页面元数据并注入到组件中
+ * 处理 definePageMeta 调用，提取并移除
  */
-export function transformDefinePageMeta(
+function processDefinePageMeta(
   code: string,
+  s: MagicString,
   id: string
-): { code: string; map?: any } | null {
-  // 只处理 Vue 文件
-  if (!id.endsWith('.vue')) {
-    return null;
-  }
-
-  // 检查是否包含 definePageMeta
-  if (!code.includes('definePageMeta')) {
-    return null;
-  }
-
-  const s = new MagicString(code);
-
-  // 使用正则表达式匹配 definePageMeta 调用
-  // 支持多种格式：definePageMeta({ ... }) 或 definePageMeta({...})
+): Record<string, unknown> | null {
   const definePageMetaRegex = /definePageMeta\s*\(\s*({[\s\S]*?})\s*\)/g;
-
-  let hasTransformed = false;
-  let pageMeta: any = null;
+  let pageMeta: Record<string, unknown> | null = null;
 
   let match;
   while ((match = definePageMetaRegex.exec(code)) !== null) {
@@ -34,52 +19,64 @@ export function transformDefinePageMeta(
     const end = start + fullMatch.length;
 
     try {
-      // 使用 Function 构造函数安全地解析对象字面量
-      // 注意：这里假设 definePageMeta 的参数是一个简单的对象字面量
       // eslint-disable-next-line no-new-func
       pageMeta = new Function(`return ${metaString}`)();
-
-      // 移除 definePageMeta 调用
       s.remove(start, end);
-      hasTransformed = true;
     } catch (error) {
       console.error(`Failed to parse definePageMeta in ${id}:`, error);
     }
   }
 
-  if (!hasTransformed || !pageMeta) {
-    return null;
-  }
+  return pageMeta;
+}
 
-  // 查找 <script setup> 标签的结束位置
+/**
+ * 注入页面元数据到代码中
+ */
+function injectPageMeta(code: string, s: MagicString, pageMeta: Record<string, unknown>): void {
   const scriptSetupMatch = code.match(/<script\s+setup[^>]*>/);
   if (scriptSetupMatch) {
     const scriptStart = scriptSetupMatch.index! + scriptSetupMatch[0].length;
-
-    // 注入页面元数据
     const injection = `
 // Injected by definePageMeta transform
 const __pageMeta = ${JSON.stringify(pageMeta)};
 `;
-
     s.appendLeft(scriptStart, injection);
   }
 
-  // 在组件导出中添加 __pageMeta 属性
   const exportDefaultMatch = code.match(/export\s+default\s+{/);
   if (exportDefaultMatch) {
     const exportStart = exportDefaultMatch.index! + exportDefaultMatch[0].length;
     s.appendLeft(exportStart, `\n  __pageMeta: ${JSON.stringify(pageMeta)},`);
   } else if (code.includes('<script setup>')) {
-    // 对于 <script setup>，需要在编译后的代码中注入
-    // 这通常由构建工具的 Vue 插件处理
-    // 我们可以添加一个特殊的注释标记
     const templateMatch = code.match(/<template>/);
     if (templateMatch) {
       const comment = `\n<!-- __pageMeta: ${JSON.stringify(pageMeta)} -->\n`;
       s.appendLeft(templateMatch.index!, comment);
     }
   }
+}
+
+/**
+ * 转换 definePageMeta 宏
+ * 提取页面元数据并注入到组件中
+ */
+export function transformDefinePageMeta(
+  code: string,
+  id: string
+): { code: string; map?: SourceMap } | null {
+  if (!id.endsWith('.vue') || !code.includes('definePageMeta')) {
+    return null;
+  }
+
+  const s = new MagicString(code);
+  const pageMeta = processDefinePageMeta(code, s, id);
+
+  if (!pageMeta) {
+    return null;
+  }
+
+  injectPageMeta(code, s, pageMeta);
 
   return {
     code: s.toString(),
@@ -91,7 +88,7 @@ const __pageMeta = ${JSON.stringify(pageMeta)};
  * 从代码中提取 definePageMeta 的参数
  * 用于路由生成器
  */
-export function extractPageMeta(code: string): any | null {
+export function extractPageMeta(code: string): Record<string, unknown> | null {
   if (!code.includes('definePageMeta')) {
     return null;
   }

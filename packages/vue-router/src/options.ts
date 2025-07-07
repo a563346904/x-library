@@ -5,7 +5,7 @@ import type { RouteOptions } from './types';
  */
 export const DEFAULT_ROUTE_OPTIONS: Partial<RouteOptions> = {
   pagesDir: 'src/pages',
-  extensions: ['.vue'],
+  extensions: ['vue'],
   exclude: [
     '**/node_modules/**',
     '**/dist/**',
@@ -16,7 +16,8 @@ export const DEFAULT_ROUTE_OPTIONS: Partial<RouteOptions> = {
   virtualModule: '~virtual-routes',
   enableLayouts: false,
   layoutsDir: 'src/layouts',
-  defaultLayout: 'default'
+  defaultLayout: 'default',
+  namespace: 'X'
 };
 
 /**

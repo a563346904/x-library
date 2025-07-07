@@ -11,12 +11,12 @@ export interface PageMeta {
   /** 路由别名 */
   alias?: string | string[];
   /** 重定向配置 */
-  redirect?: string | Record<string, any>;
+  redirect?: string | Record<string, unknown>;
   /** 其他元数据 */
-  meta?: Record<string, any>;
+  meta?: Record<string, unknown>;
   /** 中间件 */
   middleware?: string | string[];
-  [key: string]: any;
+  [key: string]: unknown;
 }
 
 /**

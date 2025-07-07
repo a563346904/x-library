@@ -3,17 +3,65 @@
  * 负责监听文件变化并触发更新
  */
 
+import { readFile } from 'fs/promises';
+
 import chokidar from 'chokidar';
 import VirtualModulePlugin from 'rspack-plugin-virtual-module';
 
 import { generateRoutes, generateRoutesCode } from '../core/generator';
 import { scanLayouts } from '../core/layout-scanner';
 import { scanPages } from '../core/scanner';
+import { extractPageMeta } from '../core/transform';
 import { ImportMode } from '../enums';
 import type { RouteOptions } from '../types';
 
 import { generateLayoutsModule } from './layout-generator';
 import { updateRoutesVirtualModule } from './virtual-module';
+
+/**
+ * 页面元信息缓存
+ * 用于检测 definePageMeta 内容是否发生变化
+ */
+const pageMetaCache = new Map<string, string>();
+
+/**
+ * 检查页面元信息是否发生变化
+ * @param filePath 文件路径
+ * @param options 路由选项
+ * @returns 是否需要更新路由
+ */
+async function hasPageMetaChanged(filePath: string, options: RouteOptions): Promise<boolean> {
+  try {
+    // 只检查 .vue 文件
+    if (!filePath.endsWith('.vue')) {
+      return true; // 非 Vue 文件，直接触发更新
+    }
+
+    // 构建完整路径
+    const fullPath = filePath.startsWith('/') ? filePath : `${options.pagesDir}/${filePath}`;
+
+    // 读取文件内容
+    const content = await readFile(fullPath, 'utf-8');
+
+    // 提取 definePageMeta 内容
+    const pageMeta = extractPageMeta(content);
+    const metaString = JSON.stringify(pageMeta);
+
+    // 获取缓存的内容
+    const cachedMeta = pageMetaCache.get(fullPath);
+
+    // 如果内容发生变化或者是新文件
+    if (cachedMeta !== metaString) {
+      pageMetaCache.set(fullPath, metaString);
+      return true;
+    }
+
+    return false;
+  } catch (error) {
+    console.error(`[vue-router] 检查文件变化时出错: ${filePath}`, error);
+    return true; // 出错时触发更新以确保安全
+  }
+}
 
 /**
  * 生成虚拟模块内容
@@ -51,15 +99,30 @@ export async function generateVirtualModuleContent(options: RouteOptions): Promi
 function createPageUpdateHandler(
   options: RouteOptions,
   virtualModulePlugin: VirtualModulePlugin
-): () => Promise<void> {
+): (path: string) => Promise<void> {
   let debounceTimer: NodeJS.Timeout;
 
-  return async () => {
+  return async (filePath: string) => {
     clearTimeout(debounceTimer);
 
     debounceTimer = setTimeout(async () => {
       try {
-        console.log('[vue-router] 检测到文件变化，重新生成路由...');
+        console.log(`[vue-router] 检测到文件变化: ${filePath}`);
+
+        // 检查虚拟模块插件是否已初始化
+        if (!virtualModulePlugin || typeof virtualModulePlugin.writeModule !== 'function') {
+          console.error('[vue-router] 虚拟模块插件未初始化，跳过更新');
+          return;
+        }
+
+        // 检查 definePageMeta 是否发生变化
+        const needsUpdate = await hasPageMetaChanged(filePath, options);
+
+        if (!needsUpdate) {
+          return; // 内容未变化，跳过更新
+        }
+
+        console.log('[vue-router] 重新生成路由...');
         const routesCode = await generateVirtualModuleContent(options);
         updateRoutesVirtualModule(options.virtualModule, virtualModulePlugin, routesCode);
         console.log('[vue-router] 路由更新完成');
@@ -136,6 +199,7 @@ export function setupFileWatcher(
   pageWatcher.on('unlink', updateRoutes);
   pageWatcher.on('addDir', updateRoutes);
   pageWatcher.on('unlinkDir', updateRoutes);
+  pageWatcher.on('change', updateRoutes); // 添加对文件内容变化的监听
 
   // 设置布局文件监听
   let layoutWatcher: ReturnType<typeof chokidar.watch> | undefined;
