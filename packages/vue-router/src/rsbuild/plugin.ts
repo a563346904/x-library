@@ -16,11 +16,11 @@ import type chokidar from 'chokidar';
 import type VirtualModulePlugin from 'rspack-plugin-virtual-module';
 
 import { mergeOptions } from '../options';
+import { unpluginDefinePageMeta } from '../shared/unplugins/define-page-meta';
 import type { RouteOptions } from '../types';
 
 import { setupFileWatcher } from './file-watcher';
 import { configureRspack } from './rspack-config';
-import { unpluginDefinePageMeta } from './unplugin-define-page-meta';
 
 /**
  * 创建 Rsbuild 自动路由插件

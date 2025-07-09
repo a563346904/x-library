@@ -5,11 +5,10 @@
 
 import VirtualModulePlugin from 'rspack-plugin-virtual-module';
 
+import { generateLayoutsExport, generateLayoutsModule } from '../core/layout-generator';
 import { type LayoutFile, scanLayouts } from '../core/layout-scanner';
+import { generateVirtualModuleContent } from '../core/virtual-content';
 import type { RouteOptions } from '../types';
-
-import { generateVirtualModuleContent } from './file-watcher';
-import { generateLayoutsExport, generateLayoutsModule } from './layout-generator';
 
 /**
  * RSpack 配置接口
