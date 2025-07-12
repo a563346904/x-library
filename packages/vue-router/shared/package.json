@@ -1,0 +1,51 @@
+{
+  "name": "@x-library/vue-router-shared",
+  "version": "0.1.0",
+  "description": "Shared utilities for Vue Router plugins",
+  "type": "module",
+  "main": "dist/index.js",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "require": "./dist/index.cjs"
+    },
+    "./layouts": {
+      "types": "./dist/layouts/index.d.ts",
+      "import": "./dist/layouts/index.js",
+      "require": "./dist/layouts/index.cjs"
+    },
+    "./macros": {
+      "types": "./dist/layouts/macros.d.ts",
+      "import": "./dist/layouts/macros.js",
+      "require": "./dist/layouts/macros.cjs"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch"
+  },
+  "dependencies": {
+    "@x-library/core": "workspace:*",
+    "fast-glob": "^3.3.3",
+    "magic-string": "^0.30.17",
+    "pathe": "^2.0.3",
+    "unplugin": "^2.3.5",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.1"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.4",
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0"
+  },
+  "peerDependencies": {
+    "vue": ">=3.0.0",
+    "vue-router": ">=4.0.0"
+  }
+}

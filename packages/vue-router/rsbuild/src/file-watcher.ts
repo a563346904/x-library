@@ -3,13 +3,15 @@
  * 使用 chokidar 监听文件变化并更新 RSpack 虚拟模块
  */
 
+import {
+  generateLayoutsModule,
+  generateVirtualModuleContent,
+  hasPageMetaChanged,
+  scanLayouts
+} from '@x-library/vue-router-shared';
+import type { RouteOptions } from '@x-library/vue-router-shared';
 import chokidar from 'chokidar';
 import VirtualModulePlugin from 'rspack-plugin-virtual-module';
-
-import { generateLayoutsModule } from '../core/layout-generator';
-import { scanLayouts } from '../core/layout-scanner';
-import { generateVirtualModuleContent, hasPageMetaChanged } from '../core/virtual-content';
-import type { RouteOptions } from '../types';
 
 import { updateRoutesVirtualModule } from './virtual-module';
 

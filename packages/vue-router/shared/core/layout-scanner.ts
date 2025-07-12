@@ -1,4 +1,4 @@
-import { glob } from 'fast-glob';
+import fastGlob from 'fast-glob';
 import { resolve } from 'pathe';
 
 export interface LayoutFile {
@@ -29,7 +29,7 @@ export async function scanLayouts(options: LayoutScanOptions): Promise<LayoutFil
   const patterns = extensions.map(ext => `**/*.${ext}`);
 
   // 扫描布局文件
-  const files = await glob(patterns, {
+  const files = await fastGlob(patterns, {
     cwd: layoutsDir,
     ignore: exclude,
     onlyFiles: true,

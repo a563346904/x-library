@@ -59,7 +59,7 @@ export function generateLayoutsExport(options: RouteOptions): string {
   // 使用相对路径导入，让构建工具自动解析
   // 在虚拟模块中使用包名导入会更可靠
   return `// Auto-generated layout component
-import { createLayoutComponent, initLayouts, useLayouts, setPageLayout, getCurrentLayout } from '@x-library/vue-router/layouts'
+import { createLayoutComponent, initLayouts, useLayouts, setPageLayout, getCurrentLayout } from '@x-library/vue-router-shared/layouts'
 import layouts from '~virtual-layouts'
 
 // 初始化布局系统

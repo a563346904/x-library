@@ -3,12 +3,13 @@
  * 负责配置 RSpack 以支持虚拟模块和文件监听
  */
 
+import {
+  generateLayoutsExport,
+  generateLayoutsModule,
+  generateVirtualModuleContent
+} from '@x-library/vue-router-shared';
+import { type LayoutFile, RouteOptions, scanLayouts } from '@x-library/vue-router-shared';
 import VirtualModulePlugin from 'rspack-plugin-virtual-module';
-
-import { generateLayoutsExport, generateLayoutsModule } from '../core/layout-generator';
-import { type LayoutFile, scanLayouts } from '../core/layout-scanner';
-import { generateVirtualModuleContent } from '../core/virtual-content';
-import type { RouteOptions } from '../types';
 
 /**
  * RSpack 配置接口
@@ -61,7 +62,7 @@ export async function configureRspack(
   // 只在启用 layouts 功能时添加 macros 模块
   if (options.enableLayouts) {
     virtualModules['~virtual-macros'] =
-      `export { definePageMeta } from '@x-library/vue-router/macros';`;
+      `export { definePageMeta } from '@x-library/vue-router-shared/macros';`;
   }
 
   // 使用虚拟模块插件

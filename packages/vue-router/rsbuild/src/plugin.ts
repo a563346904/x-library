@@ -1,23 +1,14 @@
 /**
- * RSBuild Vue Router 自动路由插件
+ * RSBuild 插件导出模块
  *
- * 功能特性:
- * - 基于文件系统的自动路由生成
- * - Nuxt 风格的布局系统
- * - 支持 definePageMeta 宏
- * - 热更新支持
- * - TypeScript 支持
- *
- * @packageDocumentation
+ * @module @x-library/vue-router/rsbuild
  */
 
 import { RsbuildPlugin } from '@rsbuild/core';
+import { mergeOptions, unpluginDefinePageMeta } from '@x-library/vue-router-shared';
+import type { RouteOptions } from '@x-library/vue-router-shared';
 import type chokidar from 'chokidar';
 import type VirtualModulePlugin from 'rspack-plugin-virtual-module';
-
-import { mergeOptions } from '../options';
-import { unpluginDefinePageMeta } from '../shared/unplugins/define-page-meta';
-import type { RouteOptions } from '../types';
 
 import { setupFileWatcher } from './file-watcher';
 import { configureRspack } from './rspack-config';

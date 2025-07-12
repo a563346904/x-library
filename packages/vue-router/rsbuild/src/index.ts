@@ -13,4 +13,4 @@ export { rsAutoRoutes };
 export default rsAutoRoutes;
 
 // 导出类型定义（从主包导出，避免重复）
-export type { RouteOptions, RouteInfo } from '../types';
+export type { RouteOptions, RouteInfo } from '../../shared/types';

@@ -1,0 +1,53 @@
+{
+  "name": "@x-library/vue-router-rsbuild",
+  "version": "0.1.0",
+  "description": "RSBuild plugin for automatic Vue Router route generation",
+  "type": "module",
+  "main": "dist/index.cjs",
+  "module": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "require": "./dist/index.cjs",
+      "import": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest"
+  },
+  "keywords": [
+    "vue",
+    "vue-router",
+    "rsbuild",
+    "rspack",
+    "plugin",
+    "auto-routes",
+    "layouts"
+  ],
+  "dependencies": {
+    "@x-library/core": "workspace:*",
+    "@x-library/vue-router-shared": "workspace:*",
+    "chokidar": "^4.0.3",
+    "pathe": "^2.0.3",
+    "rspack-plugin-virtual-module": "^1.0.1"
+  },
+  "devDependencies": {
+    "@rsbuild/core": "^1.4.2",
+    "@types/node": "^24.0.4",
+    "tsup": "^8.0.0",
+    "typescript": "^5.0.0",
+    "vue": "^3.5.13",
+    "vue-router": "^4.5.1"
+  },
+  "peerDependencies": {
+    "@rsbuild/core": ">=1.0.0",
+    "vue": ">=3.0.0",
+    "vue-router": ">=4.0.0"
+  }
+}

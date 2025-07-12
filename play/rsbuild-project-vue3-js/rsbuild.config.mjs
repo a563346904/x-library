@@ -2,8 +2,7 @@ import path from 'path';
 
 import { defineConfig } from '@rsbuild/core';
 import { pluginVue } from '@rsbuild/plugin-vue';
-
-import { rsAutoRoutes } from '../../packages/vue-router';
+import { rsAutoRoutes } from '@x-library/vue-router-rsbuild';
 
 // 从我们的包中获取自动路由插件
 export default defineConfig({

@@ -9,8 +9,12 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@x-library/core": "workspace:^",
+    "@x-library/utils": "workspace:*",
+    "@x-library/vue-router-shared": "workspace:^",
+    "@x-library/vue-router-vite": "workspace:^",
     "vue": "^3.5.13",
-    "@x-library/utils": "workspace:*"
+    "vue-router": "^4.5.1"
   },
   "devDependencies": {
     "@vitejs/plugin-vue": "^5.2.3",
